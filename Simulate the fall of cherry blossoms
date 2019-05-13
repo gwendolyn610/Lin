@@ -1,0 +1,83 @@
+import processing.sound.*;
+SoundFile file;
+PImage sakura; // display image
+ArrayList<Kura> L; // get more kura
+
+void setup() {
+  size(600, 600);
+  //music
+  file = new SoundFile(this, "11.mp3"); //put the same music name as in document
+  file.play();
+  imageMode(CENTER);
+  sakura = loadImage("sakura.png");
+  L = new ArrayList<Kura>(); 
+  for(int i=0; i<10; i++){ //show more flowers
+    L.add(new Kura());
+  }
+  
+}      
+
+void draw() {
+  background(20,49,69);
+  
+  if(random(1)<0.09) L.add(new Kura());
+  //image(sakura, width/2, height/2, 50, 50);
+  //L.display();
+  for(int i=0; i<L.size(); i++){
+    Kura LL = L.get(i);
+    LL.move();
+    LL.grow();
+    if(LL.y> height){  //remove flower when y cross height
+      L.remove(i);
+      i--;
+    }
+      else{
+        LL.display();
+      }
+    }
+   saveFrame("frames/sakura_####.png"); //  export png
+  }
+  
+  
+  class Kura{
+  float x,y; // x,y location
+  float size; // png size
+  float speed;
+  float alp,stp;  // transparency and gradient direction of transparency
+  float ang,astp; // angle and how much the flower is rotate each frame 
+  
+  
+  Kura(){
+    x = random(width);//follow the size width
+    y = random(-50, 0); // flower drop down form outside of screen
+    size = random(0.05,0.1)* width; // size random by * width
+    speed = random(0.1,1.5);//differentiation of falling speed
+    alp = random(255); 
+    stp = 1;
+    ang = random(TWO_PI); //180 degrees randomly
+    astp = random(-0.1,0.1); 
+  }
+  
+  void move(){
+    y += speed;//move faster
+  }
+  
+  void grow() {
+    size += 0.1;//size of cherry blossom is change size biger automatically
+  }
+    
+  
+  void display(){
+    alp += stp;
+    if(alp<0 || alp>255)stp =-stp;//the direction of transparency will be reversed
+    ang += astp;
+    tint(255,alp);// control the coloring of texture
+    pushMatrix();
+    translate(x, y);//the position of each cherry blossom different
+    rotate(ang);
+    image(sakura, 0, 0, size,size);//width and height follow the size
+    popMatrix();
+    noTint(); //don't affect other images 
+  }
+    
+}
